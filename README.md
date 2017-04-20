@@ -19,7 +19,7 @@ Launch the extension on ScratchX:
 ## Example Projects
 
 * [Keyboard Controller](http://scratchx.org/?url=https://gakuchan.github.io/scratchx-mad/examples/KeyboardController.sbx)
-* [Weather Information](http://scratchx.org/?url=https://gakuchan.github.io/scratchx-mad/examples/TemperatureInformation.sbx)
+* [Temperature Information](http://scratchx.org/?url=https://gakuchan.github.io/scratchx-mad/examples/TemperatureInformation.sbx)
 * [Twitter Search](http://scratchx.org/?url=https://gakuchan.github.io/scratchx-mad/examples/TwitterSearch.sbx)
 
 ## License
