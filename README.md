@@ -7,7 +7,7 @@ Extension to control a Mugbot from Scratch
 What you will need to use this extension:
 
 * [Mugbot](http://www.mugbot.com)
-* [mugbot-server-1.1.rb](https://github.com/mugbot/Mugbot-System)
+* [mugbot-server-1.2.rb](https://github.com/mugbot/Mugbot-System)
 
 ## Getting Started
 
