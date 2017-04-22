@@ -3,9 +3,17 @@
 
 (function(ext) {
 
-  var socket;
-  var faceX;
-  var faceY;
+  var socket = null;
+  var faceX = 90;
+  var faceY = 90;
+
+  var INPUT_IP_MESSAGE;
+  var CONNECTION_FAIL_MESSAGE;
+  var INVALID_IP_MESSAGE;
+  var CONNECT_MESSAGE;
+
+  var STATUS_READY_MESSAGE;
+  var STATUS_NOT_READY_MESSAGE;
 
   var FACE_TURN = 0;
   var SET_RIGHT = 1;
@@ -61,7 +69,7 @@
       return;
     }
 
-    var ip = prompt('MugbotのIPアドレスを入力してください。', '192.168.x.x');
+    var ip = prompt(INPUT_IP_MESSAGE, '192.168.x.x');
     if (!ip) {
       callback2();
       return;
@@ -69,37 +77,31 @@
 
     try {
       socket = new WebSocket('ws://' + ip + ':51234');
-      //初回接続時のタイムアウトは3秒
+
       setTimeout(function() {
-        if (socket.readyState == WebSocket.CONNECTING) {
-          alert('Mugbot（IP：' + ip + '）に接続できません。');
+        if (socket != null && socket.readyState == WebSocket.CONNECTING) {
+          alert(CONNECTION_FAIL_MESSAGE + ' (IP:' + ip + ')');
+          socket = null;
           callback2();
         }
-      }, 3000);
+      }, 3000); // initial WebSocket connection timeout
     } catch (e) {
-      alert('IPを正しく入力してください。');
+      alert(INVALID_IP_MESSAGE);
       callback2();
     }
 
     socket.onopen = function() {
-      //初期化コードの送信
-      alert('スクラッチとの接続を開始しました。');
-      socket.send('@n'); //顔の向きを初期化する
+      alert(CONNECT_MESSAGE);
+      socket.send('@n'); // initialize face direction
       faceX = 90;
       faceY = 90;
 
       callback1(arg, callback2);
     };
 
-    socket.onerror = function(error) {
-      alert('Mugbotとの接続でエラー（' + error + '）が発生しました。');
-      callback2();
-      console.log('WebSocket Error ' + error.code);
-    };
-
     socket.onclose = function(error) {
-      if (!socketReady()) { //一時的な切断を無視
-        alert('Mugbot（IP：' + ip + '）に接続できません。');
+      if (socket != null) {
+        alert(CONNECTION_FAIL_MESSAGE + ' (IP:' + ip + ')');
         callback2();
         console.log('WebSocket Error ' + error.code);
       }
@@ -116,12 +118,12 @@
     if (socketReady()) {
       return {
         status: 2,
-        msg: 'Ready'
+        msg: STATUS_READY_MESSAGE
       };
     } else {
       return {
         status: 1,
-        msg: 'Not Ready'
+        msg: STATUS_NOT_READY_MESSAGE
       };
     }
   };
@@ -129,11 +131,11 @@
   ext.turnFaceRight = function(angle, callback) {
     initializeSocket(this.turnFaceRight, angle, callback);
 
-    blockWait(FACE_TURN, angle, callback);
     if (faceX - Number(angle) >= 0 && faceX - Number(angle) <= 180) {
-      faceX -= Number(angle);
       socket.send("@x" + faceX);
+      faceX -= Number(angle);
     }
+    blockWait(FACE_TURN, angle, callback);
   };
 
   ext.setFaceRight = function(angle, callback) {
@@ -145,19 +147,19 @@
       angle = -90;
     }
 
-    blockWait(SET_RIGHT, angle, callback);
-    faceX = 90 - Number(angle);
     socket.send("@x" + faceX);
+    faceX = 90 - Number(angle);
+    blockWait(SET_RIGHT, angle, callback);
   };
 
   ext.turnFaceLeft = function(angle, callback) {
     initializeSocket(this.turnFaceLeft, angle, callback);
 
-    blockWait(FACE_TURN, angle, callback);
     if (faceX + Number(angle) >= 0 && faceX + Number(angle) <= 180) {
-      faceX += Number(angle);
       socket.send("@x" + faceX);
+      faceX += Number(angle);
     }
+    blockWait(FACE_TURN, angle, callback);
   };
 
   ext.setFaceLeft = function(angle, callback) {
@@ -169,19 +171,19 @@
       angle = -90;
     }
 
-    blockWait(SET_LEFT, angle, callback);
-    faceX = 90 + Number(angle);
     socket.send("@x" + faceX);
+    faceX = 90 + Number(angle);
+    blockWait(SET_LEFT, angle, callback);
   };
 
   ext.turnFaceUp = function(angle, callback) {
     initializeSocket(this.turnFaceUp, angle, callback);
 
-    blockWait(FACE_TURN, angle, callback);
     if (faceY + Number(angle) >= 75 && faceY + Number(angle) <= 105) {
-      faceY += Number(angle);
       socket.send("@y" + faceY);
+      faceY += Number(angle);
     }
+    blockWait(FACE_TURN, angle, callback);
   };
 
   ext.setFaceUp = function(angle, callback) {
@@ -193,19 +195,19 @@
       angle = -15;
     }
 
-    blockWait(SET_UP, angle, callback);
-    faceY = 90 + Number(angle);
     socket.send("@y" + faceY);
+    faceY = 90 + Number(angle);
+    blockWait(SET_UP, angle, callback);
   };
 
   ext.turnFaceDown = function(angle, callback) {
     initializeSocket(this.turnFaceDown, angle, callback);
 
-    blockWait(FACE_TURN, angle, callback);
     if (faceY - Number(angle) >= 75 && faceY - Number(angle) <= 105) {
-      faceY -= Number(angle);
       socket.send("@y" + faceY);
+      faceY -= Number(angle);
     }
+    blockWait(FACE_TURN, angle, callback);
   };
 
   ext.setFaceDown = function(angle, callback) {
@@ -217,9 +219,9 @@
       angle = -15;
     }
 
-    blockWait(SET_DOWN, angle, callback);
-    faceY = 90 - Number(angle);
     socket.send("@y" + faceY);
+    faceY = 90 - Number(angle);
+    blockWait(SET_DOWN, angle, callback);
   };
 
   ext.speech = function(str, callback) {
@@ -247,8 +249,32 @@
   var lang = 'ja';
   for (var i = 0; i < vars.length; i++) {
     var pair = vars[i].split('=');
-    if (pair.length > 1 && pair[0] == 'lang')
-    lang = pair[1];
+    if (pair.length > 1 && pair[0] == 'lang'){
+      if (pair[1] == 'en' || pair[1] == 'ja'){
+        lang = pair[1];
+      }
+    }
+  }
+
+  switch (lang) {
+    case 'en':
+      INPUT_IP_MESSAGE = 'Enter the IP address of Mugbot.';
+      CONNECTION_FAIL_MESSAGE = 'Connection failed to Mubot.';
+      INVALID_IP_MESSAGE = 'IP address is invalid.';
+      CONNECT_MESSAGE = 'Successfully connected to Mugbot.'
+      STATUS_READY_MESSAGE = 'Ready';
+      STATUS_NOT_READY_MESSAGE = 'Not Ready';
+      break;
+    case 'ja':
+      INPUT_IP_MESSAGE = 'MugbotのIPアドレスを入力してください。';
+      CONNECTION_FAIL_MESSAGE = 'Mugbotに接続できません。';
+      INVALID_IP_MESSAGE = 'IPアドレスを正しく入力してください。';
+      CONNECT_MESSAGE = 'Mugbotとの接続を開始しました。';
+      STATUS_READY_MESSAGE = '接続中';
+      STATUS_NOT_READY_MESSAGE = '未接続';
+      break;
+    default:
+      break;
   }
 
   var blocks = {
