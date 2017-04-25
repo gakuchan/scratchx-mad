@@ -3,9 +3,9 @@
 
 (function(ext) {
 
-  var socket = null;
-  var faceX = 90;
-  var faceY = 90;
+  var socket;
+  var faceX;
+  var faceY;
 
   var INPUT_IP_MESSAGE;
   var CONNECTION_FAIL_MESSAGE;
@@ -64,6 +64,10 @@
     }
   }
 
+  function testcb(callback){
+    callback();
+  }
+
   function initializeSocket(callback1, arg, callback2) {
     if (socketReady()) {
       return;
@@ -77,16 +81,20 @@
 
     try {
       socket = new WebSocket('ws://' + ip + ':51234');
-
-      setTimeout(function() {
+      setTimeout(function () {
         if (socket != null && socket.readyState == WebSocket.CONNECTING) {
-          alert(CONNECTION_FAIL_MESSAGE + ' (IP:' + ip + ')');
+          alert(CONNECTION_FAIL_MESSAGE + ' (IP:' + ip + ') timeout');
+          socket.releaseWaitBlock();
           socket = null;
-          callback2();
         }
-      }, 3000); // initial WebSocket connection timeout
+      }
+      , 3000); // initial WebSocket connection timeout
     } catch (e) {
       alert(INVALID_IP_MESSAGE);
+      callback2();
+    }
+
+    socket.releaseWaitBlock = function(){
       callback2();
     }
 
@@ -129,119 +137,134 @@
   };
 
   ext.turnFaceRight = function(angle, callback) {
-    initializeSocket(this.turnFaceRight, angle, callback);
-
-    if (faceX - Number(angle) >= 0 && faceX - Number(angle) <= 180) {
-      socket.send("@x" + faceX);
-      faceX -= Number(angle);
+    if(!socketReady()){
+      initializeSocket(this.turnFaceRight, angle, callback);
+    }else{
+      if (faceX - Number(angle) >= 0 && faceX - Number(angle) <= 180) {
+        faceX -= Number(angle);
+        socket.send("@x" + faceX);
+      }
+      blockWait(FACE_TURN, angle, callback);
     }
-    blockWait(FACE_TURN, angle, callback);
   };
 
   ext.setFaceRight = function(angle, callback) {
-    initializeSocket(this.setFaceRight, angle, callback);
-
-    if (angle > 90) {
-      angle = 90;
-    } else if (angle < -90) {
-      angle = -90;
+    if(!socketReady()){
+      initializeSocket(this.setFaceRight, angle, callback);
+    }else{
+      if (angle > 90) {
+        angle = 90;
+      } else if (angle < -90) {
+        angle = -90;
+      }
+      faceX = 90 - Number(angle);
+      socket.send("@x" + faceX);
+      blockWait(SET_RIGHT, angle, callback);
     }
-
-    socket.send("@x" + faceX);
-    faceX = 90 - Number(angle);
-    blockWait(SET_RIGHT, angle, callback);
   };
 
   ext.turnFaceLeft = function(angle, callback) {
-    initializeSocket(this.turnFaceLeft, angle, callback);
-
-    if (faceX + Number(angle) >= 0 && faceX + Number(angle) <= 180) {
-      socket.send("@x" + faceX);
-      faceX += Number(angle);
+    if(!socketReady()){
+      initializeSocket(this.turnFaceLeft, angle, callback);
+    }else{
+      if (faceX + Number(angle) >= 0 && faceX + Number(angle) <= 180) {
+        faceX += Number(angle);
+        socket.send("@x" + faceX);
+      }
+      blockWait(FACE_TURN, angle, callback);
     }
-    blockWait(FACE_TURN, angle, callback);
   };
 
   ext.setFaceLeft = function(angle, callback) {
-    initializeSocket(this.setFaceLeft, angle, callback);
-
-    if (angle > 90) {
-      angle = 90;
-    } else if (angle < -90) {
-      angle = -90;
+    if(!socketReady()){
+      initializeSocket(this.setFaceLeft, angle, callback);
+    }else{
+      if (angle > 90) {
+        angle = 90;
+      } else if (angle < -90) {
+        angle = -90;
+      }
+      faceX = 90 + Number(angle);
+      socket.send("@x" + faceX);
+      blockWait(SET_LEFT, angle, callback);
     }
-
-    socket.send("@x" + faceX);
-    faceX = 90 + Number(angle);
-    blockWait(SET_LEFT, angle, callback);
   };
 
   ext.turnFaceUp = function(angle, callback) {
-    initializeSocket(this.turnFaceUp, angle, callback);
-
-    if (faceY + Number(angle) >= 75 && faceY + Number(angle) <= 105) {
-      socket.send("@y" + faceY);
-      faceY += Number(angle);
+    if(!socketReady()){
+      initializeSocket(this.turnFaceUp, angle, callback);
+    }else{
+      if (faceY + Number(angle) >= 75 && faceY + Number(angle) <= 105) {
+        faceY += Number(angle);
+        socket.send("@y" + faceY);
+      }
+      blockWait(FACE_TURN, angle, callback);
     }
-    blockWait(FACE_TURN, angle, callback);
   };
 
   ext.setFaceUp = function(angle, callback) {
-    initializeSocket(this.setFaceUp, angle, callback);
-
-    if (angle > 15) {
-      angle = 15;
-    } else if (angle < -15) {
-      angle = -15;
+    if(!socketReady()){
+      initializeSocket(this.setFaceUp, angle, callback);
+    }else{
+      if (angle > 15) {
+        angle = 15;
+      } else if (angle < -15) {
+        angle = -15;
+      }
+      faceY = 90 + Number(angle);
+      socket.send("@y" + faceY);
+      blockWait(SET_UP, angle, callback);
     }
-
-    socket.send("@y" + faceY);
-    faceY = 90 + Number(angle);
-    blockWait(SET_UP, angle, callback);
   };
 
   ext.turnFaceDown = function(angle, callback) {
-    initializeSocket(this.turnFaceDown, angle, callback);
-
-    if (faceY - Number(angle) >= 75 && faceY - Number(angle) <= 105) {
-      socket.send("@y" + faceY);
-      faceY -= Number(angle);
+    if(!socketReady()){
+      initializeSocket(this.turnFaceDown, angle, callback);
+    }else{
+      if (faceY - Number(angle) >= 75 && faceY - Number(angle) <= 105) {
+        faceY -= Number(angle);
+        socket.send("@y" + faceY);
+      }
+      blockWait(FACE_TURN, angle, callback);
     }
-    blockWait(FACE_TURN, angle, callback);
   };
 
   ext.setFaceDown = function(angle, callback) {
-    initializeSocket(this.setFaceDown, angle, callback);
-
-    if (angle > 15) {
-      angle = 15;
-    } else if (angle < -15) {
-      angle = -15;
+    if(!socketReady()){
+      initializeSocket(this.setFaceDown, angle, callback);
+    }else{
+      if (angle > 15) {
+        angle = 15;
+      } else if (angle < -15) {
+        angle = -15;
+      }
+      faceY = 90 - Number(angle);
+      socket.send("@y" + faceY);
+      blockWait(SET_DOWN, angle, callback);
     }
-
-    socket.send("@y" + faceY);
-    faceY = 90 - Number(angle);
-    blockWait(SET_DOWN, angle, callback);
   };
 
   ext.speech = function(str, callback) {
-    initializeSocket(this.speech, str, callback);
-
-    socket.send(str);
-    blockWait(SPEECH, str, callback);
+    if(!socketReady()){
+      initializeSocket(this.speech, str, callback);
+    }else{
+      socket.send(str);
+      blockWait(SPEECH, str, callback);
+    }
   };
 
   ext.setEyesBrightness = function(n, callback) {
-    initializeSocket(this.setEyesBrightness, n, callback);
-
-    if (n > 255) {
-      n = 255;
-    } else if (n < 0) {
-      n = 0;
+    if(!socketReady()){
+      initializeSocket(this.setEyesBrightness, n, callback);
+    }else{
+      if (n > 255) {
+        n = 255;
+      } else if (n < 0) {
+        n = 0;
+      }
+      socket.send("@z" + n);
+      blockWait(EYE, n, callback);
     }
-
-    socket.send("@z" + n);
-    blockWait(EYE, n, callback);
   };
 
   var paramString = window.location.search.replace(/^\?|\/$/g, '');
