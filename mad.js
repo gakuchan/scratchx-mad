@@ -4,6 +4,7 @@
 (function(ext) {
 
   var socket;
+  var ip;
   var faceX;
   var faceY;
 
@@ -64,16 +65,12 @@
     }
   }
 
-  function testcb(callback){
-    callback();
-  }
-
   function initializeSocket(callback1, arg, callback2) {
     if (socketReady()) {
       return;
     }
 
-    var ip = prompt(INPUT_IP_MESSAGE, '192.168.x.x');
+    ip = prompt(INPUT_IP_MESSAGE, '192.168.x.x');
     if (!ip) {
       callback2();
       return;
