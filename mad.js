@@ -83,7 +83,8 @@
       socket = new WebSocket('ws://' + ip + ':51234');
       setTimeout(function () {
         if (socket != null && socket.readyState == WebSocket.CONNECTING) {
-          alert(CONNECTION_FAIL_MESSAGE + ' (IP:' + ip + ') timeout');
+          alert(CONNECTION_FAIL_MESSAGE + ' (IP:' + ip + ') ');
+          console.log('WebSocket Timeout');
           socket.releaseWaitBlock();
           socket = null;
         }
@@ -112,6 +113,7 @@
         alert(CONNECTION_FAIL_MESSAGE + ' (IP:' + ip + ')');
         callback2();
         console.log('WebSocket Error ' + error.code);
+        socket = null;
       }
     };
   }
