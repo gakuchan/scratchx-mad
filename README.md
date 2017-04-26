@@ -13,8 +13,8 @@ What you will need to use this extension:
 
 Launch the extension on ScratchX:
 
-* [In Japanese](http://scratchx.org/?url=http://gakuchan.github.io/scratchx-mad/mad.js&lang=ja)
-* [In English](http://scratchx.org/?url=http://gakuchan.github.io/scratchx-mad/mad.js&lang=en)
+* [In Japanese](http://scratchx.org/?url=https://gakuchan.github.io/scratchx-mad/mad.js&lang=ja)
+* [In English](http://scratchx.org/?url=https://gakuchan.github.io/scratchx-mad/mad.js&lang=en)
 
 ## Example Projects
 
