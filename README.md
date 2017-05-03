@@ -24,4 +24,4 @@ Launch the extension on ScratchX:
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details
+MIT License - see the [LICENSE](https://github.com/gakuchan/scratchx-mad/blob/master/LICENSE) file for details
