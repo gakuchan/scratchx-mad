@@ -25,3 +25,7 @@ Launch the extension on ScratchX:
 ## License
 
 MIT License - see the [LICENSE](https://github.com/gakuchan/scratchx-mad/blob/master/LICENSE) file for details
+
+## Acknowledgment
+
+This work was supported by [平成28年度 山梨県大村智人材育成基金事業](http://www.pref.yamanashi.jp/shigaku-kgk/omura_project/h28seika.html)
