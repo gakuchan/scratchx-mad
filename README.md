@@ -28,4 +28,4 @@ MIT License - see the [LICENSE](https://github.com/gakuchan/scratchx-mad/blob/ma
 
 ## Acknowledgment
 
-This work was supported by [平成28年度 山梨県大村智人材育成基金事業](http://www.pref.yamanashi.jp/shigaku-kgk/omura_project/h28seika.html)
+This work was supported by [Yamanashi Prefecture Satoshi Omura Human Resources Development Foundation, 2016](http://www.pref.yamanashi.jp/shigaku-kgk/omura_project/h28seika.html)
