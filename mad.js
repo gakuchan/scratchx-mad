@@ -328,7 +328,7 @@
 
   var descriptor = {
     blocks: blocks[lang],
-    url: 'http://gakuchan.github.io/scratchx-mad'
+    url: 'http://manabu-s.github.io/scratchx-mad'
   };
 
   ScratchExtensions.register('Mugbot Action Designer', descriptor, ext);
