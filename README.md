@@ -1,6 +1,6 @@
 # Mugbot Action Designer Extension
 
-Extension to control a Mugbot from Scratch
+Extension to control a Mugbot from ScratchX
 
 ## Requirements
 
